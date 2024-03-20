@@ -23,7 +23,15 @@ const editProduct = async (product: Product) => {
   return data
 }
 
+const createProduct = async (product: Product) => {
+  const { data } = await apiClient.post('/products', {
+    ...product,
+  })
+  return data
+}
+
 export {
   listProducts,
   editProduct,
+  createProduct,
 }
