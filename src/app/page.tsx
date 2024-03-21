@@ -19,8 +19,8 @@ import {
   deleteProduct,
 } from './API/product'
 import { Product } from './entities/product'
-import DialogProduct from '@/app/components/DialogProduct'
-import ListProduct from '@/app/components/ListProduct'
+import DialogProduct from '@/app/components/product/DialogProduct'
+import ListProduct from '@/app/components/product/ListProduct'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 
@@ -43,8 +43,6 @@ export default function Home() {
   }, [productName])
 
   const productsIsEmpty = products.length === 0
-
-  const notProductsRegistered = productsIsEmpty && productName === ''
 
   const openDialogProduct = (product: Partial<Product>) => {
     setIsEditing(Object.keys(product).length !== 0)
@@ -172,8 +170,19 @@ export default function Home() {
           </Grid>
         </Grid>
         { 
-          !isLoading && !productsIsEmpty ?
-            (<ListProduct
+          isLoading || productsIsEmpty ?
+            (
+            <Typography
+              variant='h4'
+            >
+              {
+                isLoading
+                ? 'Buscando ...'
+                : 'Nenhum produto encontrado'
+              }
+            </Typography>
+          ) : (
+            <ListProduct
               products={products}
               countProducts={countProducts}
               currentPage={currentPage}
@@ -181,18 +190,6 @@ export default function Home() {
               onEdit={openDialogProduct}
               onPageChange={onChangeListPagination}
             />
-          ) : (
-            <Typography
-              variant='h4'
-            >
-              {
-                notProductsRegistered
-                ? 'Cadastre um novo produto'
-                : productsIsEmpty
-                ? 'Nenhum produto encontrado'
-                : 'Buscando ...'
-              }
-            </Typography>
           )
         }
         <DialogProduct
