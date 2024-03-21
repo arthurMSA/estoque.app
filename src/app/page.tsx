@@ -7,7 +7,8 @@ import {
   Typography,
   Container,
   Button,
-  Pagination,
+  Snackbar,
+  Alert,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import {
@@ -32,7 +33,7 @@ export default function Home() {
   const [countProducts, setCountProducts] = useState(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
-
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   useEffect(() => {
     const searchDelayTimer = setTimeout(() => {
@@ -64,7 +65,6 @@ export default function Home() {
 
 
   const getProductsList = async (page: number = 1) => {
-    console.log('>>>', page)
     try {
       setIsLoading(true)
       const searchParams: ProductQueryParams = {
@@ -76,9 +76,8 @@ export default function Home() {
       const productResponse = await listProducts(searchParams)
       setCountProducts(productResponse.count)
       setProducts(productResponse.products)
-    } catch (error) {
-      //alert from search error
-      console.log('ERRO')
+    } catch (_) {
+      setErrorMessage('Erro ao carregar produtos')
     } finally {
       setIsLoading(false)
     }
@@ -93,9 +92,8 @@ export default function Home() {
         await createProduct(product)
       await getProductsList()
       closeDialog()
-    } catch (error) {
-      //alert from search error
-      console.log('ERRO')
+    } catch (_) {
+      setErrorMessage('Erro ao salvar produto')
     }
   }
 
@@ -205,6 +203,20 @@ export default function Home() {
           onSaveProduct={saveProduct}
         />
       </Container>
+      <Snackbar
+        open={errorMessage !== ''}
+        message={errorMessage}
+        color='error'
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        onClose={() => setErrorMessage('')}
+      >
+        <Alert
+          severity='error'
+        >
+          { errorMessage }
+        </Alert>
+      </Snackbar>
     </main>
   )
 }

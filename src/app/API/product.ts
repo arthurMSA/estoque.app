@@ -1,5 +1,5 @@
 import defaultApiClient from './defaultApiClient'
-import { Product } from '../entities/product'
+import { Product } from '@/app/entities/product'
 
 export type ProductQueryParams = {
   name?: string,

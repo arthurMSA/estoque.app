@@ -9,6 +9,7 @@ import {
   Typography,
   InputAdornment,
 } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
 import { Product } from '@/app/entities/product'
 import { useEffect, useState } from 'react'
 
@@ -20,11 +21,11 @@ export default function DialogProduct({
   onSaveProduct,
 }) {
   const [product, setProduct] = useState<Partial<Product>>({})
-  const [errorMessage, setErrorMessage] = useState('')
-  const [open, setOpen] = useState(value)
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [open, setOpen] = useState<boolean>(value)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    console.log(isEditing)
     setProduct(productToEdit)
     setOpen(value)
   }, [productToEdit, value])
@@ -32,16 +33,23 @@ export default function DialogProduct({
 
   const closeDialog = () => {
     setOpen(false)
+    setErrorMessage('')
     onClose()
   }
 
-  const saveProduct = () => {
-    if (product.name === '' || product.price === 0) {
+  const saveProduct = async () => {
+    if (product.name === '' || !product.price || !product.amount) {
+      setErrorMessage('* Preencha os campos')
+      return
+    }
+    if (product?.price < 0) {
       setErrorMessage('Dados inválidos')
       return
     }
     setErrorMessage('')
-    onSaveProduct(product)
+    setIsLoading(true)
+    await onSaveProduct(product)
+    setIsLoading(false)
   }
 
   return (
@@ -61,14 +69,15 @@ export default function DialogProduct({
           }}
         >
           <Typography
-            color="error"
-            variant='caption'
+            color='error'
+            variant='body2'
           >
-            {errorMessage}
+            { errorMessage }
           </Typography>
           <TextField
             defaultValue={product?.name}
-            label="Nome"
+            label='Nome'
+            required
             InputLabelProps={{
               shrink: true,
             }}
@@ -82,13 +91,14 @@ export default function DialogProduct({
           />
           <TextField
             defaultValue={product?.price}
-            label="Preço"
+            label='Preço'
+            required
             InputLabelProps={{
               shrink: true,
             }}
             sx={{ mb: 2 }}
             InputProps={{
-              startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+              startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
             }}
             onChange={(event) =>
               setProduct((product) => ({
@@ -99,7 +109,7 @@ export default function DialogProduct({
           />
           <TextField
             defaultValue={product?.amount}
-            label="Quantidade"
+            label='Quantidade'
             InputLabelProps={{
               shrink: true,
             }}
@@ -115,9 +125,13 @@ export default function DialogProduct({
       </DialogContent>
       <DialogActions sx={{ pr: 2 }}>
         <Button onClick={() => closeDialog()}>Cancelar</Button>
-        <Button variant="contained" onClick={() => saveProduct()}>
+        <LoadingButton
+          variant='contained'
+          loading={isLoading}
+          onClick={() => saveProduct()}
+        >
           Salvar
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   )
