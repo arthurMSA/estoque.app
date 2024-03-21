@@ -12,7 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { Product } from '@/app/entities/product'
 
 type Props = {
-  products: [Partial<Product>],
+  products: Product[],
   countProducts: number,
   currentPage: number,
   onDelete: Function,
@@ -28,6 +28,14 @@ export default function ListProduct({
   onEdit,
   onPageChange,
 }: Props) {
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-br', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(price) 
+  }
+
   return (
     <Box
       sx={{
@@ -72,10 +80,7 @@ export default function ListProduct({
                 alignSelf='center'
               >
                 <Typography variant='h6'>
-                  { new Intl.NumberFormat('pt-br', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(product.price) }
+                  { formatPrice(product.price | 0) }
                 </Typography>
                 </Grid>
               <Grid
