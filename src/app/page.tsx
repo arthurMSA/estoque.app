@@ -4,13 +4,10 @@ import {
   TextField,
   InputAdornment,
   Grid,
-  Card,
-  CardContent,
   Typography,
   Container,
   Button,
-  Box,
-  IconButton,
+  Pagination,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import {
@@ -32,6 +29,10 @@ export default function Home() {
   const [editDialog, setEditDialog] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [productToEdit, setProductToEdit] = useState<Partial<Product>>({})
+  const [countProducts, setCountProducts] = useState(0)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
 
   useEffect(() => {
     const searchDelayTimer = setTimeout(() => {
@@ -39,7 +40,6 @@ export default function Home() {
     }, 500)
     return () => clearTimeout(searchDelayTimer)
   }, [productName])
-
 
   const openDialogProduct = (product: Partial<Product>) => {
     setIsEditing(Object.keys(product).length !== 0)
@@ -53,16 +53,29 @@ export default function Home() {
     setProductToEdit({})
   }
 
-  const getProductsList = async () => {
+  const onChangeListPagination = (page: number) => {
+    setCurrentPage(page)
+    getProductsList(page)
+  }
+
+  const getProductsList = async (page: number = 1) => {
+    console.log('>>>', page)
     try {
-      const searchParams: ProductQueryParams = { name: productName }
+      setIsLoading(true)
+      const searchParams: ProductQueryParams = {
+        name: productName,
+        page,
+      }
       if (productName === '') delete searchParams.name
 
       const productResponse = await listProducts(searchParams)
-      setProducts(productResponse)
+      setCountProducts(productResponse.count)
+      setProducts(productResponse.products)
     } catch (error) {
       //alert from search error
       console.log('ERRO')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -105,7 +118,9 @@ export default function Home() {
           container
           columnSpacing={1}
           justifyContent='space-between'
-
+          sx={{
+            mb: 4,
+          }}
         >
           <Grid
             item
@@ -153,11 +168,24 @@ export default function Home() {
             </Button>
           </Grid>
         </Grid>
-        <ListProduct
-          products={products}
-          onDelete={removeProduct}
-          onEdit={openDialogProduct}
-        />
+        { 
+          !isLoading ?
+            (<ListProduct
+              products={products}
+              countProducts={countProducts}
+              currentPage={currentPage}
+              onDelete={removeProduct}
+              onEdit={openDialogProduct}
+              onPageChange={onChangeListPagination}
+            />
+          ) : (
+            <Typography
+              variant='h4'
+            >
+              Buscando ...
+            </Typography>
+          )
+        }
         <DialogProduct
           value={editDialog}
           productToEdit={productToEdit}

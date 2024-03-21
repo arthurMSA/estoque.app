@@ -2,7 +2,8 @@ import defaultApiClient from './defaultApiClient'
 import { Product } from '../entities/product'
 
 export type ProductQueryParams = {
-  name?: string
+  name?: string,
+  page: number,
 }
 
 export const listProducts = async (params: ProductQueryParams) => {

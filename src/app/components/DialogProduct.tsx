@@ -7,6 +7,7 @@ import {
   Box,
   TextField,
   Typography,
+  InputAdornment,
 } from '@mui/material'
 import { Product } from '@/app/entities/product'
 import { useEffect, useState } from 'react'
@@ -44,7 +45,11 @@ export default function DialogProduct({
   }
 
   return (
-    <Dialog open={open} onClose={() => onClose()}>
+    <Dialog
+      open={open}
+      fullWidth
+      onClose={() => onClose()}
+    >
       <DialogTitle variant='h5'>
         { isEditing ? 'Editar Produto' : 'Novo Produto'}
       </DialogTitle>
@@ -62,7 +67,7 @@ export default function DialogProduct({
             {errorMessage}
           </Typography>
           <TextField
-            value={product?.name}
+            defaultValue={product?.name}
             label="Nome"
             InputLabelProps={{
               shrink: true,
@@ -76,12 +81,15 @@ export default function DialogProduct({
             }
           />
           <TextField
-            value={product?.price}
+            defaultValue={product?.price}
             label="Preço"
             InputLabelProps={{
               shrink: true,
             }}
             sx={{ mb: 2 }}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+            }}
             onChange={(event) =>
               setProduct((product) => ({
                 ...product,
@@ -90,7 +98,7 @@ export default function DialogProduct({
             }
           />
           <TextField
-            value={product?.amount}
+            defaultValue={product?.amount}
             label="Quantidade"
             InputLabelProps={{
               shrink: true,
@@ -105,7 +113,7 @@ export default function DialogProduct({
           />
         </Box>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ pr: 2 }}>
         <Button onClick={() => closeDialog()}>Cancelar</Button>
         <Button variant="contained" onClick={() => saveProduct()}>
           Salvar
