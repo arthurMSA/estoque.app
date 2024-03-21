@@ -13,13 +13,21 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { Product } from '@/app/entities/product'
 import { useEffect, useState } from 'react'
 
+type Props = {
+  productToEdit: Partial<Product>,
+  value: boolean,
+  isEditing: boolean,
+  onClose: Function,
+  onSaveProduct: Function,
+}
+
 export default function DialogProduct({
   productToEdit,
   value,
   isEditing,
   onClose,
   onSaveProduct,
-}) {
+}: Props ) {
   const [product, setProduct] = useState<Partial<Product>>({})
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(value)

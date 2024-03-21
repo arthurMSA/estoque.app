@@ -9,6 +9,16 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { Product } from '@/app/entities/product'
+
+type Props = {
+  products: [Partial<Product>],
+  countProducts: number,
+  currentPage: number,
+  onDelete: Function,
+  onEdit: Function,
+  onPageChange: Function,
+}
 
 export default function ListProduct({
   products,
@@ -17,7 +27,7 @@ export default function ListProduct({
   onDelete,
   onEdit,
   onPageChange,
-}) {
+}: Props) {
   return (
     <Box
       sx={{
