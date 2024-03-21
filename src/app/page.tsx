@@ -11,13 +11,8 @@ import {
   Alert,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import {
-  ProductQueryParams,
-  listProducts,
-  editProduct,
-  createProduct,
-  deleteProduct,
-} from './API/product'
+import { ProductQueryParams } from './API/product'
+import API from './API/product'
 import { Product } from './entities/product'
 import DialogProduct from '@/app/components/product/DialogProduct'
 import ListProduct from '@/app/components/product/ListProduct'
@@ -71,7 +66,7 @@ export default function Home() {
       }
       if (productName === '') delete searchParams.name
 
-      const productResponse = await listProducts(searchParams)
+      const productResponse = await API.listProducts(searchParams)
       setCountProducts(productResponse.count)
       setProducts(productResponse.products)
     } catch (_) {
@@ -85,9 +80,9 @@ export default function Home() {
     try {
       if (!product) return
       if (isEditing) 
-        await editProduct(product)
+        await API.editProduct(product)
       else
-        await createProduct(product)
+        await API.createProduct(product)
       await getProductsList()
       closeDialog()
     } catch (_) {
@@ -95,9 +90,9 @@ export default function Home() {
     }
   }
 
-  const removeProduct = async (productId: string) => {
+  const deleteProduct = async (productId: string) => {
     try {
-      await deleteProduct(productId)
+      await API.deleteProduct(productId)
       getProductsList()
     } catch (error) {
       setErrorMessage('Erro ao excluir produto')
@@ -186,7 +181,7 @@ export default function Home() {
               products={products}
               countProducts={countProducts}
               currentPage={currentPage}
-              onDelete={removeProduct}
+              onDelete={deleteProduct}
               onEdit={openDialogProduct}
               onPageChange={onChangeListPagination}
             />

@@ -6,26 +6,35 @@ export type ProductQueryParams = {
   page: number,
 }
 
-export const listProducts = async (params: ProductQueryParams) => {
+const listProducts = async (params: ProductQueryParams) => {
   const { data } = await defaultApiClient.get('/products', { params })
   return data
 }
 
-export const editProduct = async (product: Product) => {
+const editProduct = async (product: Product) => {
   const { data } = await defaultApiClient.patch(`/products/${product.id}`, {
     ...product,
   })
   return data
 }
 
-export const createProduct = async (product: Product) => {
+const createProduct = async (product: Product) => {
   const { data } = await defaultApiClient.post('/products', {
     ...product,
   })
   return data
 }
 
-export const deleteProduct = async (productId: string) => {
+const deleteProduct = async (productId: string) => {
   const { data } = await defaultApiClient.delete(`/products/${productId}`)
   return data
 }
+
+const API = {
+  listProducts,
+  editProduct,
+  createProduct,
+  deleteProduct
+}
+
+export default API
