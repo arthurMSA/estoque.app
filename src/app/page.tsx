@@ -100,7 +100,7 @@ export default function Home() {
       await deleteProduct(productId)
       getProductsList()
     } catch (error) {
-      console.log('ERRO')
+      setErrorMessage('Erro ao excluir produto')
     }
   }
   return (
