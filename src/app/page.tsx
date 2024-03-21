@@ -17,12 +17,13 @@ import {
   ProductQueryParams,
   listProducts,
   editProduct,
-  Product,
   createProduct,
+  deleteProduct,
 } from './API/product'
+import { Product } from './entities/product'
 import DialogProduct from '@/app/components/DialogProduct'
+import ListProduct from '@/app/components/ListProduct'
 import SearchIcon from '@mui/icons-material/Search'
-import EditIcon from '@mui/icons-material/Edit'
 import AddIcon from '@mui/icons-material/Add'
 
 export default function Home() {
@@ -80,13 +81,29 @@ export default function Home() {
     }
   }
 
+  const removeProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId)
+      getProductsList()
+    } catch (error) {
+      console.log('ERRO')
+    }
+  }
   return (
     <main>
       <Container>
+        <Typography
+          variant='h3'
+          color='primary'
+          sx={{
+            my: 4,
+          }}
+        >
+          Gerenciar Produtos
+        </Typography>
         <Grid
           container
           columnSpacing={1}
-          rowSpacing={2}
           justifyContent='space-between'
 
         >
@@ -100,7 +117,6 @@ export default function Home() {
               sx={{
                 width: 1/1,
                 bgcolor: 'white',
-                mb: 4,
               }}
               value={productName}
               label='Buscar produto'
@@ -119,74 +135,29 @@ export default function Home() {
             item
             xs={12}
             md={3}
+            alignSelf='center'
           >
             <Button
               variant='contained'
               size='large'
               startIcon={<AddIcon />}
+              sx={{
+                width: 1/1,
+                '@media (max-width: 600px)': {
+                  mt: 3,
+                },
+              }}
               onClick={() => openDialogProduct({})}
             >
               NOVO PRODUTO
             </Button>
           </Grid>
-      </Grid>
-      <Grid
-        container
-        columnSpacing={1}
-        rowSpacing={2}
-        sx={{
-          mt: 2
-        }}
-      >
-        {products.map((product) =>
-          <Grid
-            key={product.id}
-            item
-            xs={12}
-            md={4}
-          >
-            <Card
-              sx={{
-                boxShadow: 3,
-                minHeight: 1/1
-              }}
-            >
-              <CardContent>
-                <Box sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between'
-                }}>
-                  <Typography
-                      color='primary'
-                    variant='h5'
-                  >
-                    { product.name }
-                  </Typography>
-                  <IconButton
-                    onClick={() => openDialogProduct(product)}
-                  >
-                    <EditIcon
-                      sx={{ height: 20, width: 20 }}
-                    />
-                  </IconButton>
-                </Box>
-                <Typography
-                  variant='subtitle2'
-                  sx={{ mb: 2 }}
-                >
-                  { product.amount } em estoque
-                </Typography>
-                <Typography variant='h6'>
-                  R$ { new Intl.NumberFormat('pt-br', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(product.price) }
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
         </Grid>
+        <ListProduct
+          products={products}
+          onDelete={removeProduct}
+          onEdit={openDialogProduct}
+        />
         <DialogProduct
           value={editDialog}
           productToEdit={productToEdit}

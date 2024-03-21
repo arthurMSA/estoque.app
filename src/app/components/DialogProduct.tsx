@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Product } from '@/app/API/product'
+import { Product } from '@/app/entities/product'
 import { useEffect, useState } from 'react'
 
 export default function DialogProduct({
@@ -45,7 +45,7 @@ export default function DialogProduct({
 
   return (
     <Dialog open={open} onClose={() => onClose()}>
-      <DialogTitle>
+      <DialogTitle variant='h5'>
         { isEditing ? 'Editar Produto' : 'Novo Produto'}
       </DialogTitle>
       <DialogContent>

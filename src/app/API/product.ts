@@ -1,37 +1,30 @@
-import apiClient from './apiClient'
-
-export type Product = {
-  id: string
-  name: string
-  price: number
-  amount: number
-}
+import defaultApiClient from './defaultApiClient'
+import { Product } from '../entities/product'
 
 export type ProductQueryParams = {
   name?: string
 }
 
-const listProducts = async (params: ProductQueryParams) => {
-  const { data } = await apiClient.get('/products', { params })
+export const listProducts = async (params: ProductQueryParams) => {
+  const { data } = await defaultApiClient.get('/products', { params })
   return data
 }
 
-const editProduct = async (product: Product) => {
-  const { data } = await apiClient.patch(`/products/${product.id}`, {
+export const editProduct = async (product: Product) => {
+  const { data } = await defaultApiClient.patch(`/products/${product.id}`, {
     ...product,
   })
   return data
 }
 
-const createProduct = async (product: Product) => {
-  const { data } = await apiClient.post('/products', {
+export const createProduct = async (product: Product) => {
+  const { data } = await defaultApiClient.post('/products', {
     ...product,
   })
   return data
 }
 
-export {
-  listProducts,
-  editProduct,
-  createProduct,
+export const deleteProduct = async (productId: string) => {
+  const { data } = await defaultApiClient.delete(`/products/${productId}`)
+  return data
 }
