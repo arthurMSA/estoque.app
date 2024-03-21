@@ -41,6 +41,10 @@ export default function Home() {
     return () => clearTimeout(searchDelayTimer)
   }, [productName])
 
+  const productsIsEmpty = products.length === 0
+
+  const notProductsRegistered = productsIsEmpty && productName === ''
+
   const openDialogProduct = (product: Partial<Product>) => {
     setIsEditing(Object.keys(product).length !== 0)
     setEditDialog(true)
@@ -57,6 +61,7 @@ export default function Home() {
     setCurrentPage(page)
     getProductsList(page)
   }
+
 
   const getProductsList = async (page: number = 1) => {
     console.log('>>>', page)
@@ -169,7 +174,7 @@ export default function Home() {
           </Grid>
         </Grid>
         { 
-          !isLoading ?
+          !isLoading && !productsIsEmpty ?
             (<ListProduct
               products={products}
               countProducts={countProducts}
@@ -182,7 +187,13 @@ export default function Home() {
             <Typography
               variant='h4'
             >
-              Buscando ...
+              {
+                notProductsRegistered
+                ? 'Cadastre um novo produto'
+                : productsIsEmpty
+                ? 'Nenhum produto encontrado'
+                : 'Buscando ...'
+              }
             </Typography>
           )
         }
